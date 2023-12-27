@@ -43,7 +43,7 @@ class WalletContract(Contract):
                                 seqno: int,
                                 payload: Union[Cell, str, bytes, None] = None,
                                 send_mode=SendModeEnum.ignore_errors | SendModeEnum.pay_gas_separately,
-                                dummy_signature=False, state_init=None):
+                                dummy_signature=False, state_init=None, valid_for=None):
         payload_cell = Cell()
         if payload:
             if isinstance(payload, str):
@@ -58,7 +58,7 @@ class WalletContract(Contract):
             Address(to_addr), decimal.Decimal(amount))
         order = Contract.create_common_msg_info(
             order_header, state_init, payload_cell)
-        signing_message = self.create_signing_message(seqno)
+        signing_message = self.create_signing_message(seqno, valid_for=valid_for)
         signing_message.bits.write_uint8(send_mode)
         signing_message.refs.append(order)
 
