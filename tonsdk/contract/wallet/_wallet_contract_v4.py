@@ -13,7 +13,7 @@ class WalletV4ContractBase(WalletContract):
         cell.bits.write_uint(0, 1)  # plugins dict empty
         return cell
 
-    def create_signing_message(self, seqno=None, without_op=False):
+    def create_signing_message(self, seqno=None, without_op=False, valid_for: int = 60):
         seqno = seqno or 0
         message = Cell()
         message.bits.write_uint(self.options["wallet_id"], 32)
@@ -22,7 +22,7 @@ class WalletV4ContractBase(WalletContract):
                 message.bits.write_bit(1)
         else:
             timestamp = int(time.time())  # get timestamp in seconds
-            message.bits.write_uint(timestamp + 60, 32)
+            message.bits.write_uint(timestamp + valid_for, 32)
 
         message.bits.write_uint(seqno, 32)
 
