@@ -7,10 +7,11 @@ from ..utils._address import Address
 
 class Slice:
     """Slice like an analog of slice in FunC. Used only for reading."""
+
     def __init__(self, cell: Cell):
         self.bits = bitarray.bitarray()
         self.bits.frombytes(cell.bits.array)
-        self.bits = self.bits[:cell.bits.cursor]
+        self.bits = self.bits[: cell.bits.cursor]
         self.refs = cell.refs
         self.ref_offset = 0
 
@@ -66,13 +67,13 @@ class Slice:
     def read_int(self, bit_length: int) -> int:
         if bit_length == 1:
             # if num is -1 then bit is 1. if 0 then 1. see _bit_string.py
-            return - self.read_bit()
+            return -self.read_bit()
         else:
             is_negative = self.read_bit()
             value = self.read_uint(bit_length - 1)
             if is_negative == 1:
                 # ones complement
-                return - (2 ** (bit_length - 1) - value)
+                return -(2 ** (bit_length - 1) - value)
             else:
                 return value
 
@@ -88,7 +89,7 @@ class Slice:
         if self.read_uint(2) == 0:
             return None
         self.read_bit()  # anycast
-        workchain_id = hex(self.read_int(8)).replace('0x', '')
+        workchain_id = hex(self.read_int(8)).replace("0x", "")
         hashpart = self.read_bytes(32).hex()
         return Address(workchain_id + ":" + hashpart)
 

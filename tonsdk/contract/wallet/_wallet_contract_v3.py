@@ -12,7 +12,7 @@ class WalletV3ContractBase(WalletContract):
         cell.bits.write_bytes(self.options["public_key"])
         return cell
 
-    def create_signing_message(self, seqno=None):
+    def create_signing_message(self, seqno=None, **other):
         seqno = seqno or 0
         message = Cell()
         message.bits.write_uint(self.options["wallet_id"], 32)

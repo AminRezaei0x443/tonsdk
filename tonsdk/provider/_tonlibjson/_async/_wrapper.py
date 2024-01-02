@@ -50,9 +50,11 @@ class AsyncTonLibJsonWrapper:
         self.loop = loop
         self.ls_index = ls_index
         self.read_results_task = asyncio.ensure_future(
-            self.read_results(), loop=self.loop)
+            self.read_results(), loop=self.loop
+        )
         self.del_expired_futures_task = asyncio.ensure_future(
-            self.del_expired_futures_loop(), loop=self.loop)
+            self.del_expired_futures_loop(), loop=self.loop
+        )
         self.shutdown_state = False  # False, "started", "finished"
         self.request_num = 0
         self.verbose = verbose
@@ -64,11 +66,11 @@ class AsyncTonLibJsonWrapper:
         try:
             self._tonlib_json_client_destroy(self._client)
         except Exception:
-            logger.error(f'Traceback: {traceback.format_exc()}')
+            logger.error(f"Traceback: {traceback.format_exc()}")
             asyncio.ensure_future(self.restart(), loop=self.loop)
 
     def send(self, query):
-        query = json.dumps(query).encode('utf-8')
+        query = json.dumps(query).encode("utf-8")
         try:
             self._tonlib_json_client_send(self._client, query)
         except Exception:
@@ -77,18 +79,18 @@ class AsyncTonLibJsonWrapper:
     async def restart(self):
         if not self.shutdown_state:
             self.shutdown_state = "started"
-            asyncio.ensure_future(self.restart_hook(
-                self.max_restarts), loop=self.loop)
+            asyncio.ensure_future(self.restart_hook(self.max_restarts), loop=self.loop)
 
     def receive(self, timeout=10):
         result = None
         try:
             result = self._tonlib_json_client_receive(
-                self._client, timeout)  # time.sleep # asyncio.sleep
+                self._client, timeout
+            )  # time.sleep # asyncio.sleep
         except Exception:
             asyncio.ensure_future(self.restart(), loop=self.loop)
         if result:
-            result = json.loads(result.decode('utf-8'))
+            result = json.loads(result.decode("utf-8"))
         return result
 
     def set_restart_hook(self, hook, max_requests=None, max_restarts=None):
@@ -97,10 +99,9 @@ class AsyncTonLibJsonWrapper:
         self.restart_hook = hook
 
     def execute(self, query, timeout=10):
-        query_type = query.get('@type', '?')
+        query_type = query.get("@type", "?")
 
-        extra_id = "%s:%s:%s" % (
-            time.time()+timeout, self.ls_index, random.random())
+        extra_id = "%s:%s:%s" % (time.time() + timeout, self.ls_index, random.random())
         query["@extra"] = extra_id
 
         self.loop.run_in_executor(None, lambda: self.send(query))
@@ -117,7 +118,9 @@ class AsyncTonLibJsonWrapper:
 
     @property
     def _is_finishing(self):
-        return (not len(self.futures)) and (self.shutdown_state in ["started", "finished"])
+        return (not len(self.futures)) and (
+            self.shutdown_state in ["started", "finished"]
+        )
 
     async def read_results(self):
         timeout = 3
@@ -127,7 +130,10 @@ class AsyncTonLibJsonWrapper:
         while not self._is_finishing:
             result = None
             try:
-                result = await asyncio.wait_for(self.loop.run_in_executor(None, receive_func), timeout=timeout + delta)
+                result = await asyncio.wait_for(
+                    self.loop.run_in_executor(None, receive_func),
+                    timeout=timeout + delta,
+                )
             except asyncio.TimeoutError:
                 logger.critical(f"Tonlib #{self.ls_index:03d} Stuck!")
                 asyncio.ensure_future(self.restart(), loop=self.loop)
@@ -138,14 +144,20 @@ class AsyncTonLibJsonWrapper:
                 await asyncio.sleep(0.05)
 
             # return result
-            if result and isinstance(result, dict) and ("@extra" in result) and (result["@extra"] in self.futures):
+            if (
+                result
+                and isinstance(result, dict)
+                and ("@extra" in result)
+                and (result["@extra"] in self.futures)
+            ):
                 try:
                     if not self.futures[result["@extra"]].done():
                         self.futures[result["@extra"]].set_result(result)
                         self.futures.pop(result["@extra"])
                 except Exception as e:
                     logger.error(
-                        f'Tonlib #{self.ls_index:03d} receiving result exception: {e}')
+                        f"Tonlib #{self.ls_index:03d} receiving result exception: {e}"
+                    )
         self.shutdown_state = "finished"
 
     async def del_expired_futures_loop(self):

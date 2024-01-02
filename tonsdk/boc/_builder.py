@@ -1,7 +1,6 @@
-
-
 from ._bit_string import BitString
 from ._cell import Cell
+
 
 class Builder:
     def __init__(self):

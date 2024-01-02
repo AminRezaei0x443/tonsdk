@@ -5,7 +5,7 @@ from ...boc import Cell
 
 
 class WalletV2ContractBase(WalletContract):
-    def create_signing_message(self, seqno=None):
+    def create_signing_message(self, seqno=None, **other):
         seqno = seqno or 0
         message = Cell()
         message.bits.write_uint(seqno, 32)

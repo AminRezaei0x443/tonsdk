@@ -1,15 +1,96 @@
 from tonsdk.contract.wallet import MultiSigWallet, MultiSigOrder, MultiSigOrderBuilder
 from tonsdk.crypto import mnemonic_new, mnemonic_to_wallet_key, verify_sign
-from tonsdk.utils import Address, bytes_to_b64str, b64str_to_bytes, to_nano, sign_message
+from tonsdk.utils import (
+    Address,
+    bytes_to_b64str,
+    b64str_to_bytes,
+    to_nano,
+    sign_message,
+)
 
 
 """import or generate mnemonics"""
 # mnemonics1 = mnemonic_new()
 # mnemonics2 = mnemonic_new()
 # mnemonics3 = mnemonic_new()
-mnemonics1 = ['broken', 'decade', 'unit', 'bird', 'enrich', 'great', 'nurse', 'offer', 'rescue', 'sound', 'pole', 'true', 'dignity', 'buyer', 'provide', 'boil', 'connect', 'universe', 'model', 'add', 'obtain', 'hire', 'gift', 'swim']
-mnemonics2 = ['rather', 'voice', 'zone', 'fold', 'rotate', 'crane', 'roast', 'brave', 'motor', 'kid', 'note', 'squirrel', 'piece', 'home', 'expose', 'bench', 'flame', 'wood', 'person', 'assist', 'vocal', 'bomb', 'dismiss', 'diesel']
-mnemonics3 = ['author', 'holiday', 'figure', 'luxury', 'leg', 'fringe', 'sibling', 'citizen', 'enforce', 'convince', 'silly', 'girl', 'remove', 'purity', 'sand', 'paper', 'file', 'review', 'window', 'kite', 'illegal', 'allow', 'satisfy', 'wait']
+mnemonics1 = [
+    "broken",
+    "decade",
+    "unit",
+    "bird",
+    "enrich",
+    "great",
+    "nurse",
+    "offer",
+    "rescue",
+    "sound",
+    "pole",
+    "true",
+    "dignity",
+    "buyer",
+    "provide",
+    "boil",
+    "connect",
+    "universe",
+    "model",
+    "add",
+    "obtain",
+    "hire",
+    "gift",
+    "swim",
+]
+mnemonics2 = [
+    "rather",
+    "voice",
+    "zone",
+    "fold",
+    "rotate",
+    "crane",
+    "roast",
+    "brave",
+    "motor",
+    "kid",
+    "note",
+    "squirrel",
+    "piece",
+    "home",
+    "expose",
+    "bench",
+    "flame",
+    "wood",
+    "person",
+    "assist",
+    "vocal",
+    "bomb",
+    "dismiss",
+    "diesel",
+]
+mnemonics3 = [
+    "author",
+    "holiday",
+    "figure",
+    "luxury",
+    "leg",
+    "fringe",
+    "sibling",
+    "citizen",
+    "enforce",
+    "convince",
+    "silly",
+    "girl",
+    "remove",
+    "purity",
+    "sand",
+    "paper",
+    "file",
+    "review",
+    "window",
+    "kite",
+    "illegal",
+    "allow",
+    "satisfy",
+    "wait",
+]
 
 
 """get pub and priv keys from mnemonics"""
@@ -23,7 +104,12 @@ wallet = MultiSigWallet(public_keys=[pub_k0, pub_k1, pub_k2], k=2, wallet_id=0)
 
 """create order and add message"""
 order1 = MultiSigOrderBuilder(wallet.options["wallet_id"])
-message = order1.add_message(to_addr='EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N', amount=to_nano('0.01', 'ton'), send_mode=3, payload='hello from python tonsdk')
+message = order1.add_message(
+    to_addr="EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N",
+    amount=to_nano("0.01", "ton"),
+    send_mode=3,
+    payload="hello from python tonsdk",
+)
 query_id = order1.query_id  # remember this query id or share this with other owners
 
 
@@ -45,8 +131,12 @@ order2 = MultiSigOrderBuilder(wallet.options["wallet_id"], query_id=query_id)
 
 
 """add the same message here"""
-order2.add_message(to_addr='EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N', amount=to_nano('0.01', 'ton'),
-                   send_mode=3, payload='hello from python tonsdk')
+order2.add_message(
+    to_addr="EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N",
+    amount=to_nano("0.01", "ton"),
+    send_mode=3,
+    payload="hello from python tonsdk",
+)
 # or
 order2.add_message_from_cell(message)
 

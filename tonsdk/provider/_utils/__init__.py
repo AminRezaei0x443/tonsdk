@@ -5,7 +5,7 @@ from ...boc import Cell
 
 
 def parse_object(obj):
-    type_name = obj['@type']
+    type_name = obj["@type"]
 
     if type_name in ["tvm.list", "tvm.tuple"]:
         return [parse_object(o) for o in obj["elements"]]  # ?
@@ -24,7 +24,7 @@ def parse_response_stack(pair):
     val = pair[1]
 
     if type_name == "num":
-        return int(val.replace('/0x/', ''), 16)
+        return int(val.replace("/0x/", ""), 16)
     elif type_name in ["list", "tuple"]:
         return parse_object(val)
     elif type_name == "cell":

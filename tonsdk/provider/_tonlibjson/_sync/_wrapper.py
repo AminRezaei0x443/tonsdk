@@ -35,13 +35,13 @@ class SyncTonLibWrapper:
 
     def __del__(self):
         try:
-            if hasattr(self, '__tonlib_json_client_destroy'):
+            if hasattr(self, "__tonlib_json_client_destroy"):
                 self.__tonlib_json_client_destroy(self._client)
         except Exception:  # FIXME
             raise
 
     def send(self, query):
-        query = json.dumps(query).encode('utf-8')
+        query = json.dumps(query).encode("utf-8")
 
         try:
             self.__tonlib_json_client_send(self._client, query)
@@ -51,11 +51,10 @@ class SyncTonLibWrapper:
     def receive(self, timeout=4):
         result = None
         try:
-            result = self.__tonlib_json_client_receive(
-                self._client, timeout)
+            result = self.__tonlib_json_client_receive(self._client, timeout)
         except Exception:  # FIXME
             raise
 
         if result:
-            result = json.loads(result.decode('utf-8'))
+            result = json.loads(result.decode("utf-8"))
         return result
